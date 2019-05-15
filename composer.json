@@ -13,7 +13,7 @@
         "files": ["autoload.php"]
     },
     "suggest": {
-        "lexpress/doctrine1": "Doctrine plugin",
+        "chepew23/doctrine1": "Doctrine plugin",
         "propel/sf-propel-o-r-m-plugin": "Propel plugin",
         "psr/log": "Psr logger"
     },
