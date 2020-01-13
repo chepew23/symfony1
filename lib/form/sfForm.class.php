@@ -933,7 +933,7 @@ class sfForm implements ArrayAccess, Iterator, Countable
   {
     if (null === $secret)
     {
-      $secret = $this->localCSRFSecret ?: self::$CSRFSecret;
+      $secret = $this->localCSRFSecret ? $this->localCSRFSecret : self::$CSRFSecret;
     }
 
     return md5($secret.session_id().get_class($this));

@@ -84,7 +84,7 @@ function has_component_slot($name)
   {
     return false;
   }
-  
+
   // check to see if component slot is empty (null)
   if ($viewInstance->getComponentSlot($name))
   {
@@ -135,8 +135,6 @@ function get_component($moduleName, $componentName, $vars = array())
 {
   $context = sfContext::getInstance();
   $actionName = '_'.$componentName;
-
-  require($context->getConfigCache()->checkConfig('modules/'.$moduleName.'/config/module.yml'));
 
   $class = sfConfig::get('mod_'.strtolower($moduleName).'_partial_view_class', 'sf').'PartialView';
   $view = new $class($context, $moduleName, $actionName, '');
@@ -356,7 +354,8 @@ function _call_component($moduleName, $componentName, $vars)
   $componentInstance = $controller->getComponent($moduleName, $componentName);
 
   // load component's module config file
-  require($context->getConfigCache()->checkConfig('modules/'.$moduleName.'/config/module.yml'));
+  $file = $context->getConfigCache()->checkConfig('modules/'.$moduleName.'/config/module.yml');
+  $context->getConfigCache()->doRequire($file);
 
   // pass unescaped vars to the component if escaping_strategy is set to true
   $componentInstance->getVarHolder()->add(true === sfConfig::get('sf_escaping_strategy') ? sfOutputEscaper::unescape($vars) : $vars);

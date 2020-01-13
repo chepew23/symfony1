@@ -246,6 +246,20 @@ class sfBasicSecurityUser extends sfUser implements sfSecurityUser
     // initialize parent
     parent::initialize($dispatcher, $storage, $options);
 
+    if (!array_key_exists('timeout', $this->options))
+    {
+      $this->options['timeout'] = 1800;
+    }
+
+    if (session_status() !== PHP_SESSION_ACTIVE)
+    {
+      // force the max lifetime for session garbage collector to be greater than timeout
+      if (ini_get('session.gc_maxlifetime') < $this->options['timeout'])
+      {
+        ini_set('session.gc_maxlifetime', $this->options['timeout']);
+      }
+    }
+
     // read data from storage
     $this->authenticated = $storage->read(self::AUTH_NAMESPACE);
     $this->credentials   = $storage->read(self::CREDENTIAL_NAMESPACE);

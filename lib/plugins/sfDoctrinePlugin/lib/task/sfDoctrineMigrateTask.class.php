@@ -37,6 +37,7 @@ class sfDoctrineMigrateTask extends sfDoctrineBaseTask
       new sfCommandOption('up', null, sfCommandOption::PARAMETER_NONE, 'Migrate up one version'),
       new sfCommandOption('down', null, sfCommandOption::PARAMETER_NONE, 'Migrate down one version'),
       new sfCommandOption('dry-run', null, sfCommandOption::PARAMETER_NONE, 'Do not persist migrations'),
+      new sfCommandOption('init-in', null, sfCommandOption::PARAMETER_OPTIONAL, 'Start migration cycle in this version'),
     ));
 
     $this->namespace = 'doctrine';
@@ -60,6 +61,10 @@ If your database supports rolling back DDL statements, you can run migrations
 in dry-run mode using the [--dry-run|COMMENT] option:
 
   [./symfony doctrine:migrate --dry-run|INFO]
+  
+To init migration cycle in a specific version:
+
+  [./symfony doctrine:migrate --init-in=10|INFO] 
 EOF;
   }
 
@@ -72,6 +77,16 @@ EOF;
 
     $config = $this->getCliConfig();
     $migration = new Doctrine_Migration($config['migrations_path']);
+
+    if (isset($options['init-in']))
+    {
+      $initialVersion = (int)$options['init-in'];
+      $migration->initInVersion($initialVersion);
+      $this->logSection('doctrine', sprintf('Already at migration version %s', $initialVersion));
+
+      return;
+    }
+
     $from = $migration->getCurrentVersion();
 
     if (is_numeric($arguments['version']))

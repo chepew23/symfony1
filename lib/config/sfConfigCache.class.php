@@ -389,4 +389,179 @@ class sfConfigCache
 
     $this->userHandlers = array();
   }
+
+  /**
+   * Checks if a cache exists for the configuration file.
+   *
+   * @param string $configFile The configuration file (e.g. like config/app.yml) or the cache identifier.
+   *
+   * @return bool Whether the cache representation exists.
+   *
+   * @throws sfConfigurationException If a requested configuration file does not exist
+   */
+  public function checkIfCacheExists($configFile)
+  {
+    $configFile = trim($configFile);
+
+    if (!$configFile || gettype($configFile) !== 'string' || strlen($configFile) == 0)
+    {
+      throw new sfConfigurationException('Invalid value for param $configFile. It can not be empty.');
+    }
+
+    return file_exists($this->getCacheName($configFile));
+  }
+
+  /**
+   * Remove specific configuration cache
+   *
+   * @param string $config The configuration file name (e.g. config/app.yml) to delete it's cache
+   * or the cache identifier (e.g. config_app.yml.php).
+   *
+   * @param bool $isCacheIdentifier Whether $config is the cache identifier and not the configuration filename,
+   * e.g config_app.yml.php
+   *
+   * @return bool Whether the cache has been deleted.
+   *
+   * @throws sfConfigurationException If $config is empty
+   */
+  public function clearSpecificCache($config, $isCacheIdentifier = false)
+  {
+    $config = trim($config);
+
+    if (!$config || gettype($config) !== 'string' || strlen($config) == 0)
+    {
+      throw new sfConfigurationException('Invalid value for param $configFile. It can not be empty.');
+    }
+
+    if (!$isCacheIdentifier)
+    {
+      $config = $this->getCacheName($config);
+    }
+    else
+    {
+      $config = sfConfig::get('sf_config_cache_dir').'/'.$config;
+    }
+
+    return unlink($config);
+  }
+
+  /**
+   * Load the cache configuration file through require sentence
+   *
+   * @param string $configFile The filesystem path to the cache configuration file to load
+   *
+   * @param array $ambitVariables Extra variables to add in the scope when the require process is executed,
+   * so the script to require can reach them. Must be an assoc array where the key is the name of the variable.
+   *
+   * @return mixed Whether the cache has been reqired or the returned content of the cache required.
+   *
+   * @throws sfConfigurationException If $configFile is empty
+   */
+  public function doRequire($configFile, $ambitVariables = [])
+  {
+    // Get the caller object if there is one.
+    $dbt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+    $callerObject = isset($dbt[1]['object']) ? $dbt[1]['object'] : null;
+
+    return $this->_doIncludeOrRequire($configFile, 'require', $callerObject, $ambitVariables);
+  }
+
+  /**
+   * Load the cache configuration file through include sentence
+   *
+   * @param string $configFile The filesystem path to the cache configuration file to load
+   *
+   * @param array $ambitVariables Extra variables to add in the scope when the include process is executed,
+   * so the script to include can reach them. Must be an assoc array where the key is the name of the variable.
+   *
+   * @return mixed Whether the cache has been included or the returned content of the evaluated file.
+   *
+   * @throws sfConfigurationException If $configFile is empty
+   */
+  public function doInclude($configFile, $ambitVariables = [])
+  {
+    // Get the caller object if there is one.
+    $dbt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+    $callerObject = isset($dbt[1]['object']) ? $dbt[1]['object'] : null;
+
+    return $this->_doIncludeOrRequire($configFile, 'include', $callerObject, $ambitVariables);
+  }
+
+  /**
+   * Executes the load cache process being mandatory as indicated by $includeOrRequire param.
+   * Also takes into account the original caller object and their local ambient variables to bring
+   * them to the included/required script.
+   *
+   * @param string $configFile The filesystem path to the cache configuration file to load
+   *
+   * @param string $includeOrRequire 'include' or 'require' to load the cache configuration file
+   *
+   * @param object $callerObject The $this object to use as ambiet when the cache script is loaded.
+   *
+   * @param array $ambitVariables Extra variables to add in the scope when the include/require process is executed,
+   * so the script to load can reach them. Must be an assoc array where the key is the name of the variable.
+   *
+   * @return mixed Whether the cache has been included/required or the returned content of the evaluated file
+   *
+   * @throws sfConfigurationException If $configFile is empty
+   */
+  private function _doIncludeOrRequire($configFile, $includeOrRequire, $callerObject, $ambitVariables)
+  {
+    $configFile = trim($configFile);
+
+    if (!$configFile || gettype($configFile) !== 'string' || strlen($configFile) == 0)
+    {
+      throw new sfConfigurationException('Invalid value for param $configFile. It can not be empty.');
+    }
+
+    $closure = function () use ($configFile, $includeOrRequire, $ambitVariables)
+    {
+      // To extract ambit local variables from caller check if $ambitVariables is assoc array
+      $ambitVariables_keys = array_keys($ambitVariables);
+
+      // If the array keys of the keys match the keys, then the array must
+      // not be associative (e.g. the keys array look
+      $isAssoc = array_keys($ambitVariables_keys) !== $ambitVariables_keys;
+
+      if ($isAssoc)
+      {
+        extract($ambitVariables);
+      }
+
+      if ($includeOrRequire == 'require')
+      {
+        return require($configFile);
+      }
+
+      return include($configFile);
+    };
+
+    if ($callerObject)
+    {
+      $closureBinded = Closure::bind($closure, $callerObject, get_class($callerObject));
+      return $closureBinded();
+    }
+
+    return $closure();
+  }
+
+  /**
+   * Return as a string the content of cache configuration for the $configFile specified
+   *
+   * @param string $configFile The filesystem path to the cache configuration file
+   *
+   * @return false|string
+   * @throws sfConfigurationException If $config is empty
+   */
+  public function getCacheContent($configFile)
+  {
+    $configFile = trim($configFile);
+
+    if (!$configFile || gettype($configFile) !== 'string' || strlen($configFile) == 0)
+    {
+      throw new sfConfigurationException('Invalid value for param $configFile. It can not be empty.');
+    }
+
+    return file_get_contents($configFile);
+  }
 }

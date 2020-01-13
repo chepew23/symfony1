@@ -1,8 +1,23 @@
 [?php use_stylesheets_for_form($form) ?]
 [?php use_javascripts_for_form($form) ?]
-
-<div class="sf_admin_form">
-  [?php echo form_tag_for($form, '@<?php echo $this->params['route_prefix'] ?>') ?]
+<script>
+  $(function() {
+    var getFCWords = function  (str) {
+      var rcTmp = str.split(' '),
+          nuCont = rcTmp.length,
+          result = '';
+      for (var i=0; i<nuCont; i++) {
+        result += rcTmp[i].substr(0, 1);
+      }
+      return result.toUpperCase();
+    };
+    $('input[id*=name]').keyup(function() {
+      $('input[id*=abbr]').attr({'value': getFCWords($('input[id*=name]').attr('value'))});
+    });
+  });
+</script>
+<div class="sf_admin_form col-sm-12">
+  [?php echo form_tag_for($form, '@<?php echo $this->params['route_prefix'] ?>', array('class' => 'form-horizontal')) ?]
     [?php echo $form->renderHiddenFields(false) ?]
 
     [?php if ($form->hasGlobalErrors()): ?]

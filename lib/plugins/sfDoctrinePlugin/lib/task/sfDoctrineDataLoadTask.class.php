@@ -34,7 +34,7 @@ class sfDoctrineDataLoadTask extends sfDoctrineBaseTask
     $this->addOptions(array(
       new sfCommandOption('application', null, sfCommandOption::PARAMETER_OPTIONAL, 'The application name', true),
       new sfCommandOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev'),
-      new sfCommandOption('append', null, sfCommandOption::PARAMETER_NONE, 'Don\'t delete current data in the database'),
+      new sfCommandOption('no-confirmation', null, sfCommandOption::PARAMETER_NONE, 'Whether to force delete current data of the database')
       new sfCommandOption('charset', null, sfCommandOption::PARAMETER_OPTIONAL, 'Specify charset'),
     ));
 
@@ -53,11 +53,6 @@ If you want to load data from specific files or directories, you can append
 them as arguments:
 
   [./symfony doctrine:data-load data/fixtures/dev data/fixtures/users.yml|INFO]
-
-If you don't want the task to remove existing data in the database,
-use the [--append|COMMENT] option:
-
-  [./symfony doctrine:data-load --append|INFO]
 EOF;
   }
 
@@ -66,13 +61,32 @@ EOF;
    */
   protected function execute($arguments = array(), $options = array())
   {
+    sfContext::createInstance($this->configuration);
+
     $databaseManager = new sfDatabaseManager($this->configuration);
+    $environment = $this->configuration instanceof sfApplicationConfiguration ? $this->configuration->getEnvironment() : 'all';
 
     if (!count($arguments['dir_or_file']))
     {
       // pull default from CLI config array
       $config = $this->getCliConfig();
       $arguments['dir_or_file'] = $config['data_fixtures_path'];
+    }
+
+    $options['append'] = false;
+
+    if (
+      !$options['no-confirmation']
+      &&
+      !$this->askConfirmation(array(
+        sprintf('This command will remove current data in the following "%s" connection(s):', $environment),
+        'Are you sure you want to proceed? (Y/n)',
+        'NOTE: If you do not want to proceed in this way, the task appends the data.'
+      ),
+        'QUESTION_LARGE', true)
+    )
+    {
+      $options['append'] = true;
     }
 
     $doctrineArguments = array(

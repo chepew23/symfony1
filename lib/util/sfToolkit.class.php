@@ -228,6 +228,12 @@ class sfToolkit
         $args[2] = array();
         if (is_array($args[0]) && is_array($args[1]))
         {
+          if (!self::hasStringKeys($args[0]) && !self::hasStringKeys($args[1]) &&
+          count($args[0]) > 0 && count($args[0]) > 0)
+          {
+            return array_merge_recursive($args[0], $args[1]);
+          }
+
           foreach (array_unique(array_merge(array_keys($args[0]),array_keys($args[1]))) as $key)
           {
             $isKey0 = array_key_exists($key, $args[0]);
@@ -263,6 +269,21 @@ class sfToolkit
         break;
     }
   }
+
+  /**
+   * Returns wheter the given array has strings in its keys.
+   * So this function can be used to determine wheter the array is sequential o zero-index based
+   * See: https://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential/4254008#4254008
+   *
+   * @param array $array The array to analyze
+   *
+   * @return bool wheter the given array has only strings in its keys
+   */
+  public static function hasStringKeys($array)
+  {
+    return count(array_filter(array_keys($array), 'is_string')) > 0;
+  }
+
 
   /**
    * Converts string to array
@@ -366,7 +387,7 @@ class sfToolkit
    */
   public static function pregtr($search, $replacePairs)
   {
-    return preg_replace(array_keys($replacePairs), array_values($replacePairs), $search);
+    return @preg_replace(array_keys($replacePairs), array_values($replacePairs), $search);
   }
 
   /**

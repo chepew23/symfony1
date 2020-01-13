@@ -75,6 +75,24 @@ class sfValidatorDoctrineUnique extends sfValidatorSchema
       $this->setOption('column', array($this->getOption('column')));
     }
 
+    foreach ($this->getOption('column') as $key => $column)
+    {
+      if(array_key_exists($column,$values))
+      {
+        if (isset($values[$column]) && empty($values[$column]))
+        {
+          $values[$column] = null;
+        }
+        elseif (TqMagic::isEmpty($values[$column]))
+        {
+          unset($values[$column]);
+        }
+      }
+
+    }
+    $originalValues = $values;
+    $table = Doctrine_Core::getTable($this->getOption('model'));
+
     //if $values isn't an array, make it one
     if (!is_array($values))
     {

@@ -47,6 +47,8 @@ class sfWidgetFormChoice extends sfWidgetFormChoiceBase
     $this->addOption('renderer_class', false);
     $this->addOption('renderer_options', array());
     $this->addOption('renderer', false);
+    $this->addOption('add_empty', false);
+    $this->addOption('readonly', false);
   }
 
   /**
@@ -130,6 +132,8 @@ class sfWidgetFormChoice extends sfWidgetFormChoiceBase
     $options = $this->options['renderer_options'];
     $options['choices'] = new sfCallable(array($this, 'getChoices'));
 
+    $options['readonly'] = $this->getOption('readonly');
+
     $renderer = new $class($options, $this->getAttributes());
 
     // choices returned by the callback will already be translated (so we need to avoid double-translation)
@@ -140,5 +144,16 @@ class sfWidgetFormChoice extends sfWidgetFormChoiceBase
     $renderer->setParent($this->getParent());
 
     return $renderer;
+  }
+
+  public function getChoices()
+  {
+    $choices = parent::getChoices();
+
+    if ($this->getOption('add_empty')) {
+      $choices = ['' => ''] + $choices;
+    }
+
+    return $choices;
   }
 }

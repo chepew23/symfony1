@@ -60,6 +60,11 @@ abstract class Base<?php echo $this->modelName ?>Form extends <?php echo $this->
 <?php foreach ($this->getManyToManyRelations() as $relation): ?>
   public function update<?php echo $relation['alias'] ?>List($values)
   {
+    if (!$this->isValid())
+    {
+      throw $this->getErrorSchema();
+    }
+
     if (!isset($this->widgetSchema['<?php echo $this->underscore($relation['alias']) ?>_list']))
     {
       // somebody has unset this widget

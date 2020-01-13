@@ -126,29 +126,18 @@ class sfAutoload
     }
 
     self::$freshCache = true;
-    if (is_file($configuration->getConfigCache()->getCacheName('config/autoload.yml')))
+    if ($configuration->getConfigCache()->checkIfCacheExists('config/autoload.yml'))
     {
       self::$freshCache = false;
       if ($force)
       {
-        if (file_exists($configuration->getConfigCache()->getCacheName('config/autoload.yml')))
-        {
-          unlink($configuration->getConfigCache()->getCacheName('config/autoload.yml'));
-        }
+        $configuration->getConfigCache()->clearSpecificCache('config/autoload.yml');
       }
     }
 
     $file = $configuration->getConfigCache()->checkConfig('config/autoload.yml');
 
-    if ($force && defined('HHVM_VERSION'))
-    {
-      // workaround for https://github.com/facebook/hhvm/issues/1447
-      $this->classes = eval(str_replace('<?php', '', file_get_contents($file)));
-    }
-    else
-    {
-      $this->classes = include $file;
-    }
+    $this->classes = $configuration->getConfigCache()->doInclude($file);
 
     foreach ($this->overriden as $class => $path)
     {

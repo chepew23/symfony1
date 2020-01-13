@@ -160,7 +160,8 @@ class sfContext implements ArrayAccess
     }
 
     // include the factories configuration
-    require($this->configuration->getConfigCache()->checkConfig('config/factories.yml'));
+    $config = $this->configuration->getConfigCache()->checkConfig('config/factories.yml');
+    $this->configuration->getConfigCache()->doRequire($config);
 
     $this->dispatcher->notify(new sfEvent($this, 'context.load_factories'));
 
@@ -680,5 +681,24 @@ class sfContext implements ArrayAccess
     {
       $this->getLogger()->shutdown();
     }
+  }
+
+  /**
+   * This method return a logger manager instance object.
+   *
+   * @return LoggerManager
+   */
+  public function getLoggerManager()
+  {
+    if (!isset($this->factories['logger_manager']))
+    {
+      $managerClass = sfConfig::get('sf_logger_manager', 'LoggerManager');
+      $this->factories['logger_manager'] = new $managerClass(
+        $this->getConfiguration()->getEnvironment(),
+        $this->getConfiguration()->getApplication()
+      );
+    }
+
+    return $this->factories['logger_manager'];
   }
 }

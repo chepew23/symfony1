@@ -24,7 +24,7 @@ abstract class Base<?php echo $this->table->getOption('name') ?>FormFilter exten
 
     $this->setValidators(array(
 <?php foreach ($this->getColumns() as $column): ?>
-<?php if ($column->isPrimaryKey()) continue ?>
+<?php if ($column->isPrimaryKey() || $column->getName() === 'hashsum' || $column->getName() === 'tenant') continue ?>
       '<?php echo $column->getFieldName() ?>'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($column->getFieldName())) ?> => <?php echo $this->getValidatorForColumn($column) ?>,
 <?php endforeach; ?>
 <?php foreach ($this->getManyToManyRelations() as $relation): ?>
@@ -70,6 +70,8 @@ abstract class Base<?php echo $this->table->getOption('name') ?>FormFilter exten
   {
     return array(
 <?php foreach ($this->getColumns() as $column): ?>
+<?php if ($column->getName() === 'hashsum') continue ?>
+<?php if ($column->getName() === 'tenant') continue ?>
       '<?php echo $column->getFieldName() ?>'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($column->getFieldName())) ?> => '<?php echo $this->getType($column) ?>',
 <?php endforeach; ?>
 <?php foreach ($this->getManyToManyRelations() as $relation): ?>

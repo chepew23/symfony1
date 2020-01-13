@@ -162,6 +162,7 @@ class sfChoiceFormat
 
   protected function isValidSetNotation($number, $set)
   {
+    $result = null;
     $str = '$result = '.str_replace('n', '$number', $set).';';
     try
     {

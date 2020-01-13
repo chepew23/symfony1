@@ -55,7 +55,7 @@ class sfWidgetFormDateRange extends sfWidgetForm
    */
   public function render($name, $value = null, $attributes = array(), $errors = array())
   {
-    $value = array_merge(array('from' => '', 'to' => ''), is_array($value) ? $value : array());
+    $value = array_merge(array('from' => '', 'to' => '', 'is_empty' => ''), is_array($value) ? $value : array());
     $attributes = array_merge(array('from' => array(), 'to' => array()), is_array($attributes) ? $attributes : array());
 
     return strtr($this->translate($this->getOption('template')), array(
@@ -71,7 +71,7 @@ class sfWidgetFormDateRange extends sfWidgetForm
    */
   public function getStylesheets()
   {
-    return array_merge($this->getOption('from_date')->getStylesheets(), $this->getOption('to_date')->getStylesheets());
+    return array_unique(array_merge($this->getOption('from_date')->getStylesheets(), $this->getOption('to_date')->getStylesheets()));
   }
 
   /**

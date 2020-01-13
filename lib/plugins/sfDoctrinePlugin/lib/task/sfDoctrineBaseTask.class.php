@@ -71,7 +71,7 @@ abstract class sfDoctrineBaseTask extends sfBaseTask
    * @param array|null        $names An array of names or NULL for all databases
    *
    * @return array An associative array of {@link sfDoctrineDatabase} objects and their names
-   * 
+   *
    * @throws InvalidArgumentException If a requested database is not a Doctrine database
    */
   protected function getDoctrineDatabases(sfDatabaseManager $databaseManager, array $names = null)
@@ -126,9 +126,9 @@ abstract class sfDoctrineBaseTask extends sfBaseTask
    * A schema file is any file saved in a plugin or project's config/doctrine/
    * directory that matches the "*.yml" glob.
    *
-   * @return string Absolute path to the consolidated schema file
+   * @return array|string Absolute path to the consolidated schema file
    */
-  protected function prepareSchemaFile($yamlSchemaPath)
+  protected function prepareSchemaFile($yamlSchemaPath, $returnArraySchema = false)
   {
     $models = array();
     $finder = sfFinder::type('file')->name('*.yml')->sort_by_name()->follow_link();
@@ -191,7 +191,7 @@ abstract class sfDoctrineBaseTask extends sfBaseTask
     $this->logSection('file+', $file);
     file_put_contents($file, sfYaml::dump($models, 4));
 
-    return $file;
+    return $returnArraySchema ? $models : $file;
   }
 
   /**
@@ -200,7 +200,7 @@ abstract class sfDoctrineBaseTask extends sfBaseTask
    * @param array $models An array of model definitions
    *
    * @return array An array of globals
-   * 
+   *
    * @see Doctrine_Import_Schema::getGlobalDefinitionKeys()
    */
   protected function filterSchemaGlobals(& $models)
@@ -222,10 +222,10 @@ abstract class sfDoctrineBaseTask extends sfBaseTask
 
   /**
    * Canonicalizes a model definition in preparation for merging.
-   * 
+   *
    * @param string $model      The model name
    * @param array  $definition The model definition
-   * 
+   *
    * @return array The canonicalized model definition
    */
   protected function canonicalizeModelDefinition($model, $definition)

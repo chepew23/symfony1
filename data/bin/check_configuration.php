@@ -77,6 +77,8 @@ if (class_exists('PDO'))
   $drivers = PDO::getAvailableDrivers();
   check(count($drivers), 'PDO has some drivers installed: '.implode(', ', $drivers), 'Install PDO drivers (mandatory for Doctrine)');
 }
+check(class_exists('DomDocument'), 'PHP-XML module is installed', 'Install and enable the php-xml module (required by Propel)', false);
+check(class_exists('XSLTProcessor'), 'XSL module is installed', 'Install and enable the XSL module (recommended for Propel)', false);
 check(function_exists('token_get_all'), 'The token_get_all() function is available', 'Install and enable the Tokenizer extension (highly recommended)', false);
 check(function_exists('mb_strlen'), 'The mb_strlen() function is available', 'Install and enable the mbstring extension', false);
 check(function_exists('iconv'), 'The iconv() function is available', 'Install and enable the iconv extension', false);

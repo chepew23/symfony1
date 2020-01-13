@@ -53,6 +53,7 @@ EOF;
   {
     $this->logSection('doctrine', 'creating tables');
 
+    sfContext::createInstance($this->configuration);
     $databaseManager = new sfDatabaseManager($this->configuration);
     $config = $this->getCliConfig();
 

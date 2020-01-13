@@ -71,7 +71,7 @@ class sfValidatorDate extends sfValidatorBase
     {
       if (!preg_match($regex, $value, $match))
       {
-        throw new sfValidatorError($this, 'bad_format', array('value' => $value, 'date_format' => $this->getOption('date_format_error') ?: $this->getOption('date_format')));
+        throw new sfValidatorError($this, 'bad_format', array('value' => $value, 'date_format' => $this->getOption('date_format_error') ? $this->getOption('date_format_error') : $this->getOption('date_format')));
       }
 
       $value = $match;

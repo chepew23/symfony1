@@ -45,6 +45,7 @@ class sfWidgetFormSelectRadio extends sfWidgetFormChoiceBase
     $this->addOption('separator', "\n");
     $this->addOption('formatter', array($this, 'formatter'));
     $this->addOption('template', '%group% %options%');
+    $this->addOption('readonly', false);
   }
 
   /**

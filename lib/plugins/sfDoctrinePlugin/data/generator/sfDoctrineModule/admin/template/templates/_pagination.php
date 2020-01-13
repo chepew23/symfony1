@@ -1,25 +1,35 @@
-<div class="sf_admin_pagination">
-  <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') ?]?page=1">
-    [?php echo image_tag(sfConfig::get('sf_admin_module_web_dir').'/images/first.png', array('alt' => __('First page', array(), 'sf_admin'), 'title' => __('First page', array(), 'sf_admin'))) ?]
-  </a>
-
-  <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') ?]?page=[?php echo $pager->getPreviousPage() ?]">
-    [?php echo image_tag(sfConfig::get('sf_admin_module_web_dir').'/images/previous.png', array('alt' => __('Previous page', array(), 'sf_admin'), 'title' => __('Previous page', array(), 'sf_admin'))) ?]
-  </a>
+<ul class="pagination pagination-sm no-margin pull-right">
+  [?php $isFirstPage = $pager->isFirstPage() ?]
+  <li[?php echo $isFirstPage ? ' class="disabled"' : '' ?]>
+    <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') . '?page=1' ?]"
+       title="[?php echo __('First page', array(), 'sf_admin') ?]"
+       class="[?php echo $isFirstPage ? 'tq_self_more' : 'tq_self_none' ?]">&laquo;</a>
+  </li>
+  <li[?php echo $isFirstPage ? ' class="disabled"' : '' ?]>
+    <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') . '?page=' . $pager->getPreviousPage() ?]"
+       title="[?php echo __('Previous page', array(), 'sf_admin') ?]"
+       class="[?php echo $isFirstPage ? 'tq_self_more' : 'tq_self_none' ?]">&lsaquo;</a>
+  </li>
 
   [?php foreach ($pager->getLinks() as $page): ?]
-    [?php if ($page == $pager->getPage()): ?]
+    [?php $isActive = ($page == $pager->getPage()) ?]
+  <li[?php echo $isActive ? ' class="active"' : '' ?]>
+    <a href="[?php echo $isActive ? '#' : url_for('@<?php echo $this->getUrlForAction('list') ?>') . '?page=' . $page ?]"
+       class="tq_self_none">
       [?php echo $page ?]
-    [?php else: ?]
-      <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') ?]?page=[?php echo $page ?]">[?php echo $page ?]</a>
-    [?php endif; ?]
+  </a>
+  </li>
   [?php endforeach; ?]
 
-  <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') ?]?page=[?php echo $pager->getNextPage() ?]">
-    [?php echo image_tag(sfConfig::get('sf_admin_module_web_dir').'/images/next.png', array('alt' => __('Next page', array(), 'sf_admin'), 'title' => __('Next page', array(), 'sf_admin'))) ?]
-  </a>
-
-  <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') ?]?page=[?php echo $pager->getLastPage() ?]">
-    [?php echo image_tag(sfConfig::get('sf_admin_module_web_dir').'/images/last.png', array('alt' => __('Last page', array(), 'sf_admin'), 'title' => __('Last page', array(), 'sf_admin'))) ?]
-  </a>
-</div>
+  [?php $isLastPage = $pager->isLastPage() ?]
+  <li[?php echo $isLastPage ? ' class="disabled tq_self_more"' : '' ?]>
+    <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') . '?page=' . $pager->getNextPage() ?]"
+       title="[?php echo __('Next page', array(), 'sf_admin') ?]"
+       class="[?php echo $isLastPage ? 'tq_self_more' : 'tq_self_none' ?]">&rsaquo;</a>
+  </li>
+  <li[?php echo $isLastPage ? ' class="disabled tq_self_more"' : '' ?]>
+    <a href="[?php echo url_for('@<?php echo $this->getUrlForAction('list') ?>') . '?page=' . $pager->getLastPage() ?]"
+       title="[?php echo __('Last page', array(), 'sf_admin') ?]"
+       class="[?php echo $isLastPage ? 'tq_self_more' : 'tq_self_none' ?]">&raquo;</a>
+  </li>
+</ul>

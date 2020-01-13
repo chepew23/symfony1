@@ -78,6 +78,22 @@ class sfCompileConfigHandler extends sfYamlConfigHandler
   }
 
   /**
+   * Callback for configuration file insertion in the cache.
+   *
+   */
+  protected function insertConfigFileCallback($matches)
+  {
+    $configFile = 'config/'.$matches[4];
+
+    $configCache = sfContext::getInstance()->getConfigCache();
+    $configCache->checkConfig($configFile);
+
+    $config = "// '$configFile' config file\n".$configCache->getCacheContent($configCache->getCacheName($configFile));
+
+    return $config;
+  }
+
+  /**
    * @see sfConfigHandler
    * @inheritdoc
    */

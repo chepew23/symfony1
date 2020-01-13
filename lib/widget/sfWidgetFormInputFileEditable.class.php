@@ -74,6 +74,10 @@ class sfWidgetFormInputFileEditable extends sfWidgetFormInputFile
    */
   public function render($name, $value = null, $attributes = array(), $errors = array())
   {
+    if (!isset($attributes['class'])) {
+      $attributes['class'] = '';
+    }
+
     $input = parent::render($name, $value, $attributes, $errors);
 
     if (!$this->getOption('edit_mode'))

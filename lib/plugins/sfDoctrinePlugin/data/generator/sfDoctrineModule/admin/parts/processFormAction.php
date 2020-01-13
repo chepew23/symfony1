@@ -27,13 +27,11 @@
       {
         $this->getUser()->setFlash('notice', $notice.' You can add another one below.');
 
-        $this->redirect('@<?php echo $this->getUrlForAction('new') ?>');
-      }
-      else
-      {
+        $this->redirect($this->generateUrl('<?php echo $this->getUrlForAction('new') ?>', array('related_module' => $request->getParameter('related_module'))));
+      } else {
         $this->getUser()->setFlash('notice', $notice);
 
-        $this->redirect(array('sf_route' => '<?php echo $this->getUrlForAction('edit') ?>', 'sf_subject' => $<?php echo $this->getSingularName() ?>));
+        $this->redirect(array('sf_route' => '<?php echo $this->getUrlForAction('edit') ?>', 'sf_subject' => $<?php echo $this->getSingularName() ?>, 'related_module' => $request->getParameter('related_module')));
       }
     }
     else

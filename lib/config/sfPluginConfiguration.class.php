@@ -229,4 +229,11 @@ abstract class sfPluginConfiguration
   {
     return substr(get_class($this), 0, -13);
   }
+
+  protected function defineSecureConstant($name, $value)
+  {
+    if (!defined($name)) {
+      define($name, $value);
+    }
+  }
 }

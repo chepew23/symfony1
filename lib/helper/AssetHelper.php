@@ -439,7 +439,18 @@ function include_metas()
   $i18n = sfConfig::get('sf_i18n') ? $context->getI18N() : null;
   foreach ($context->getResponse()->getMetas() as $name => $content)
   {
-    echo tag('meta', array('name' => $name, 'content' => null === $i18n ? $content : $i18n->__($content)))."\n";
+    if ($name === 'charset')
+    {
+      echo tag('meta', array('charset' => $content))."\n";
+    }
+    elseif($name === 'x-ua-compatible')
+    {
+      echo tag('meta', array('http-equiv' => $name, 'content' => $content))."\n";
+    }
+    else
+    {
+      echo tag('meta', array('name' => $name, 'content' => null === $i18n ? $content : $i18n->__($content)))."\n";
+    }
   }
 }
 
@@ -491,7 +502,7 @@ function include_title()
  *
  * @return string <script> tags
  */
-function get_javascripts()
+function get_javascripts($useVersion = false)
 {
   $response = sfContext::getInstance()->getResponse();
   sfConfig::set('symfony.asset.javascripts_included', true);
@@ -499,6 +510,10 @@ function get_javascripts()
   $html = '';
   foreach ($response->getJavascripts() as $file => $options)
   {
+    if ($useVersion && (strpos($file, '?') === false && stripos($file, 'http') !== 0)) {
+      $file .= '?v=' . sfConfig::get('app_resource_version');
+    }
+
     $html .= javascript_include_tag($file, $options);
   }
 
@@ -510,9 +525,9 @@ function get_javascripts()
  *
  * @see get_javascripts()
  */
-function include_javascripts()
+function include_javascripts($useVersion = false)
 {
-  echo get_javascripts();
+  echo get_javascripts($useVersion);
 }
 
 /**
@@ -534,7 +549,7 @@ function clear_javascripts()
  *
  * @return string <link> tags
  */
-function get_stylesheets()
+function get_stylesheets($useVersion = false)
 {
   $response = sfContext::getInstance()->getResponse();
   sfConfig::set('symfony.asset.stylesheets_included', true);
@@ -542,6 +557,10 @@ function get_stylesheets()
   $html = '';
   foreach ($response->getStylesheets() as $file => $options)
   {
+    if ($useVersion && (strpos($file, '?') === false && stripos($file, 'http') !== 0)) {
+      $file .= '?v=' . sfConfig::get('app_resource_version');
+    }
+
     $html .= stylesheet_tag($file, $options);
   }
 
@@ -553,9 +572,9 @@ function get_stylesheets()
  *
  * @see get_stylesheets()
  */
-function include_stylesheets()
+function include_stylesheets($useVersion = false)
 {
-  echo get_stylesheets();
+  echo get_stylesheets($useVersion);
 }
 
 /* Clear all stylesheets of the response object.
@@ -671,7 +690,7 @@ function use_javascripts_for_form(sfForm $form)
 
   foreach ($form->getJavaScripts() as $file)
   {
-    $response->addJavascript($file);
+    $response->addJavascript($file, 'last');
   }
 }
 
@@ -725,6 +744,6 @@ function use_stylesheets_for_form(sfForm $form)
 
   foreach ($form->getStylesheets() as $file => $media)
   {
-    $response->addStylesheet($file, '', array('media' => $media));
+    $response->addStylesheet($file, 'last', array('media' => $media));
   }
 }

@@ -117,11 +117,10 @@ abstract class sfApplicationConfiguration extends ProjectConfiguration
       sfAutoloadAgain::getInstance()->register();
     }
 
-    // load base settings
-    include($configCache->checkConfig('config/settings.yml'));
+    $configCache->doInclude($configCache->checkConfig('config/settings.yml'));
     if ($file = $configCache->checkConfig('config/app.yml', true))
     {
-      include($file);
+      $configCache->doInclude($file);
     }
 
     if (!sfConfig::get('sf_cli') && false !== sfConfig::get('sf_csrf_secret'))

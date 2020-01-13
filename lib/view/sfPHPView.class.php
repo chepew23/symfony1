@@ -107,7 +107,8 @@ class sfPHPView extends sfView
     $this->context->set('view_instance', $this);
 
     // require our configuration
-    require($this->context->getConfigCache()->checkConfig('modules/'.$this->moduleName.'/config/view.yml'));
+    $config = $this->context->getConfigCache()->checkConfig('modules/'.$this->moduleName.'/config/view.yml');
+    $this->context->getConfigCache()->doRequire($config);
 
     // set template directory
     if (!$this->directory)

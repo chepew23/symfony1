@@ -42,7 +42,7 @@ abstract class sfAction extends sfComponent
     // include security configuration
     if ($file = $context->getConfigCache()->checkConfig('modules/'.$this->getModuleName().'/config/security.yml', true))
     {
-      require($file);
+      $context->getConfigCache()->doRequire($file);
     }
   }
 

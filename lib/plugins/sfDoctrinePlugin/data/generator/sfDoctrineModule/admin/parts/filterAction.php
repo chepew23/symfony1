@@ -6,7 +6,7 @@
     {
       $this->setFilters($this->configuration->getFilterDefaults());
 
-      $this->redirect('@<?php echo $this->getUrlForAction('list') ?>');
+      $this->redirect($this->generateUrl('<?php echo $this->getUrlForAction('list') ?>', array('related_module' => $request->getParameter('related_module'))));
     }
 
     $this->filters = $this->configuration->getFilterForm($this->getFilters());
@@ -16,11 +16,15 @@
     {
       $this->setFilters($this->filters->getValues());
 
-      $this->redirect('@<?php echo $this->getUrlForAction('list') ?>');
+      $this->redirect($this->generateUrl('<?php echo $this->getUrlForAction('list') ?>', array('related_module' => $request->getParameter('related_module'))));
     }
 
     $this->pager = $this->getPager();
     $this->sort = $this->getSort();
 
     $this->setTemplate('index');
+
+    $this->getContext()->getConfiguration()->loadHelpers(array('I18N'), $this->getModuleName());
+    prestaBreadcrumb::getInstance()->setRoot(sfInflector::humanize($this->getModuleName()), '@<?php echo $this->getUrlForAction('list') ?>');
+    prestaBreadcrumb::getInstance()->addItem(<?php echo $this->getI18NString('list.title') ?>, '@<?php echo $this->getUrlForAction('list') ?>', true);
   }

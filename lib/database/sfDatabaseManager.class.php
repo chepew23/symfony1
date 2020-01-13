@@ -67,7 +67,8 @@ class sfDatabaseManager
   {
     if ($this->configuration instanceof sfApplicationConfiguration)
     {
-      $databases = include($this->configuration->getConfigCache()->checkConfig('config/databases.yml'));
+      $file = $this->configuration->getConfigCache()->checkConfig('config/databases.yml');
+      $databases = $this->configuration->getConfigCache()->doInclude($file);
     }
     else
     {

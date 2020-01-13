@@ -723,7 +723,7 @@ class sfWebResponse extends sfResponse
    *
    * @return array An associative array of javascript files as keys and options as values
    */
-  public function getJavascripts($position = self::ALL)
+  public function getJavaScripts($position = self::ALL)
   {
     if (self::ALL === $position)
     {

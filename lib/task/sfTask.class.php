@@ -479,7 +479,7 @@ abstract class sfTask
 
     $ret = trim(fgets(STDIN));
 
-    return $ret ?: $default;
+    return $ret ? $ret : $default;
   }
 
   /**
@@ -588,7 +588,7 @@ abstract class sfTask
     $dom->formatOutput = true;
     $dom->appendChild($taskXML = $dom->createElement('task'));
     $taskXML->setAttribute('id', $this->getFullName());
-    $taskXML->setAttribute('namespace', $this->getNamespace() ?: '_global');
+    $taskXML->setAttribute('namespace', $this->getNamespace() ? $this->getNamespace() : '_global');
     $taskXML->setAttribute('name', $this->getName());
 
     $taskXML->appendChild($usageXML = $dom->createElement('usage'));

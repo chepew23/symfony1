@@ -21,7 +21,7 @@ abstract class sfModelGeneratorHelper
   {
     return '<li class="sf_admin_action_edit">'.link_to(__($params['label'], array(), 'sf_admin'), $this->getUrlForAction('edit'), $object).'</li>';
   }
-  
+
   /**
    * @param Persistent|mixed $object
    * @param array $params
@@ -33,22 +33,41 @@ abstract class sfModelGeneratorHelper
     {
       return '';
     }
-
-    return '<li class="sf_admin_action_delete">'.link_to(__($params['label'], array(), 'sf_admin'), $this->getUrlForAction('delete'), $object, array('method' => 'delete', 'confirm' => !empty($params['confirm']) ? __($params['confirm'], array(), 'sf_admin') : $params['confirm'])).'</li>';
+    // CSRF protection
+    $form = new BaseForm();
+    return sprintf(
+      '<li class="sf_admin_action_none">%s<input id="csrf_token_delete" type="hidden" name="%s" value="%s"/></li>',
+      link_to(__($params['label'], array(), 'sf_admin'), $this->getUrlForAction('delete'), $object, array(
+        'class' => 'tq_self_none tq_delete tq_confirm btn btn-danger btn-sm',
+        'title' => !empty($params['confirm']) ? __($params['confirm'], array(), 'sf_admin') : $params['confirm']
+      )),
+      $form->getCSRFFieldName(),
+      $form->getCSRFToken()
+    );
   }
 
+  /**
+   * This function generate a link (this item is a HTML's element) to "list" register interface.
+   * @param  array  $params
+   * @return string
+   */
   public function linkToList($params)
   {
-    return '<li class="sf_admin_action_list">'.link_to(__($params['label'], array(), 'sf_admin'), '@'.$this->getUrlForAction('list')).'</li>';
+    return '<li class="sf_admin_action_none">'.link_to(__('Back to list', array(), 'sf_admin'), '@'.$this->getUrlForAction('list'), array('class' => 'tq_self_none btn btn-default btn-sm')).'</li>';
   }
 
+  /**
+   * This function generate a link (this item is a HTML's element) to "save" register interface.
+   * @param  array  $params
+   * @return string
+   */
   public function linkToSave($object, $params)
   {
-    return '<li class="sf_admin_action_save"><input type="submit" value="'.__($params['label'], array(), 'sf_admin').'" /></li>';
+    return '<li class=""><input class="btn btn-primary btn-sm" type="submit" value="'.__($params['label'], array(), 'sf_admin').'" /></li>';
   }
-  
+
   /**
-   * @param Persistent|mixed $object
+   * This function generate a link (this item is a HTML's element) to "save and add" register interface.
    * @param array $params
    * @return string
    */
@@ -59,6 +78,6 @@ abstract class sfModelGeneratorHelper
       return '';
     }
 
-    return '<li class="sf_admin_action_save_and_add"><input type="submit" value="'.__($params['label'], array(), 'sf_admin').'" name="_save_and_add" /></li>';
+    return '<li class=""><input class="btn btn-primary btn-sm" type="submit" value="'.__($params['label'], array(), 'sf_admin').'" name="_save_and_add" /></li>';
   }
 }

@@ -159,7 +159,7 @@ abstract class sfMessageSource_File extends sfMessageSource
    */
   protected function getCatalogues($dir = null, $variant = null)
   {
-    $dir = $dir ?: $this->getSource($variant);
+    $dir = $dir ? $dir : $this->getSource($variant);
     $files = scandir($dir);
 
     $catalogue = array();

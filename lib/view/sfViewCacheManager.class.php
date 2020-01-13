@@ -334,7 +334,8 @@ class sfViewCacheManager
   {
     if (!isset($this->loaded[$moduleName]))
     {
-      require($this->context->getConfigCache()->checkConfig('modules/'.$moduleName.'/config/cache.yml'));
+      $config = $this->context->getConfigCache()->checkConfig('modules/'.$moduleName.'/config/cache.yml');
+      $this->context->getConfigCache()->doRequire($config);
       $this->loaded[$moduleName] = true;
     }
   }

@@ -41,7 +41,7 @@ class sfWidgetFormDate extends sfWidgetForm
     $this->addOption('format', '%month%/%day%/%year%');
     $this->addOption('days', parent::generateTwoCharsRange(1, 31));
     $this->addOption('months', parent::generateTwoCharsRange(1, 12));
-    $years = range(date('Y') - 5, date('Y') + 5);
+    $years = array_reverse(range(date('Y') - 80, date('Y') + 5));
     $this->addOption('years', array_combine($years, $years));
 
     $this->addOption('can_be_empty', true);

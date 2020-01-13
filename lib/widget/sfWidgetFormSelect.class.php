@@ -36,6 +36,9 @@ class sfWidgetFormSelect extends sfWidgetFormChoiceBase
     parent::configure($options, $attributes);
 
     $this->addOption('multiple', false);
+    $this->addOption('readonly', false);
+    $this->addOption('add_empty', false);
+    $this->addOption('with_title', false);
   }
 
   /**
@@ -52,6 +55,8 @@ class sfWidgetFormSelect extends sfWidgetFormChoiceBase
    */
   public function render($name, $value = null, $attributes = array(), $errors = array())
   {
+    $attributes = count($attributes) > 0 ? $attributes : $this->attributes;
+
     if ($this->getOption('multiple'))
     {
       $attributes['multiple'] = 'multiple';
@@ -61,6 +66,13 @@ class sfWidgetFormSelect extends sfWidgetFormChoiceBase
         $name .= '[]';
       }
     }
+
+    if (!isset($attributes['class'])) {
+      $attributes['class'] = '';
+    }
+
+    $attributes['class'] .= ' form-control';
+    $attributes['readonly'] = $this->getOption('readonly', false);
 
     $choices = $this->getChoices();
 
@@ -92,6 +104,11 @@ class sfWidgetFormSelect extends sfWidgetFormChoiceBase
     }
 
     $options = array();
+
+    if ($this->getOption('add_empty', false)) {
+      $options = ['' => ''] + $options;
+    }
+
     foreach ($choices as $key => $option)
     {
       if (is_array($option))
@@ -104,6 +121,22 @@ class sfWidgetFormSelect extends sfWidgetFormChoiceBase
         if (isset($value_set[(string) $key]))
         {
           $attributes['selected'] = 'selected';
+        }
+
+        $attributes['readonly'] = $this->getOption('readonly', false);
+
+        if ($this->getOption('with_title'))
+        {
+          $attributes['title'] = $option;
+
+          if (isset($attributes['class']))
+          {
+            $attributes['class'] = 'no-tipsy ' . $attributes['class'];
+          }
+          else
+          {
+            $attributes['class'] = 'no-tipsy';
+          }
         }
 
         $options[] = $this->renderContentTag('option', self::escapeOnce($option), $attributes);

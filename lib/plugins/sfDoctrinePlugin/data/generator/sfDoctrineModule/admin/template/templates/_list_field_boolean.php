@@ -1,5 +1,5 @@
 [?php if ($value): ?]
-  [?php echo image_tag(sfConfig::get('sf_admin_module_web_dir').'/images/tick.png', array('alt' => __('Checked', array(), 'sf_admin'), 'title' => __('Checked', array(), 'sf_admin'))) ?]
+  [?php echo '<span class ="green_state">' . __('Active', array(), 'messages') . '</span>'; ?]
 [?php else: ?]
-  &nbsp;
+  [?php echo '<span class ="red_state">' . __('Inactive', array(), 'messages') . '</span>'; ?]
 [?php endif; ?]

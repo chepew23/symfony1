@@ -14,4 +14,8 @@
 
     $this->pager = $this->getPager();
     $this->sort = $this->getSort();
+
+    $this->getContext()->getConfiguration()->loadHelpers(array('I18N'), $this->getModuleName());
+    prestaBreadcrumb::getInstance()->setRoot(sfInflector::humanize($this->getModuleName()), '@<?php echo $this->getUrlForAction('list') ?>');
+    prestaBreadcrumb::getInstance()->addItem(<?php echo $this->getI18NString('list.title') ?>, '@<?php echo $this->getUrlForAction('list') ?>', true);
   }
