@@ -3,7 +3,8 @@
     "description": "Fork of symfony 1.4 with dic, form enhancements, latest swiftmailer and better performance",
     "license": "MIT",
     "require": {
-        "swiftmailer/swiftmailer": "~5.2"
+        "swiftmailer/swiftmailer": "~5.2",
+        "chepew23/doctrine1": "~1.3.*"
     },
     "require-dev": {
         "psr/log": "*"
@@ -11,11 +12,6 @@
     "type": "library",
     "autoload": {
         "files": ["autoload.php"]
-    },
-    "suggest": {
-        "chepew23/doctrine1": "Doctrine plugin",
-        "propel/sf-propel-o-r-m-plugin": "Propel plugin",
-        "psr/log": "Psr logger"
     },
     "extra": {
         "branch-alias": {
